@@ -21,4 +21,5 @@ public class Person {
     long id;
     String name;
     LocalDate dateOfBirth;
+    int age;
 }
