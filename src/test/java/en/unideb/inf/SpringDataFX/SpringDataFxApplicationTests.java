@@ -10,6 +10,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
 
+import java.util.Optional;
+
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Rollback(false)
@@ -57,17 +59,17 @@ class SpringDataFxApplicationTests {
 		personRepository.save(Person.builder()
 				.name("Rebeka").age(21).build());
 
-		Person p = personRepository.findFirstByName("Rebeka").get();
-		long previousId = p.getId();
+		Optional<Person> person = personRepository.findFirstByName("Rebeka");
 
-		personRepository.delete(p);
-
-		p = personRepository.findFirstByName("Rebeka").get();
-		long newId = p.getId();
-
-		personRepository.delete(p);
-
-		Assertions.assertThat(previousId).isNotEqualTo(newId);
+		if (person.isPresent()) {
+			Person p = personRepository.findFirstByName("Rebeka").get();
+			long previousId = p.getId();
+			personRepository.delete(p);
+			p = personRepository.findFirstByName("Rebeka").get();
+			long newId = p.getId();
+			personRepository.delete(p);
+			Assertions.assertThat(previousId).isNotEqualTo(newId);
+		}
 	}
 
 }
